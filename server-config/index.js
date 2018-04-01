@@ -2,17 +2,19 @@ const modules_config = require('./modules-default-config');
 const modules_service = require('./modules-service');
 const path = require('path');
 
-process.env.NODE_ENV = "dev";
-const env = process.env.NODE_ENV;
+process.env.NODE_ENV = "development";
 
-const hostname = (env == 'dev')
+const hostname = (process.env.NODE_ENV == 'development')
     ? "http://t.justdial.com/verticals/hotel"
     : "http://localhost:8080/hotels";
 
+let server = {};
+server.hostname = hostname;
+server.public_dir = path.join(__dirname,'/../','public');
+
 const load_module = function (module, callback) {
     const mod_config_path = modules_service.getModuleConfigDir(module) + '/index.js';
-    
-    console.log('===', mod_config_path);
+
     let mod = {};
     try {
         mod = require(mod_config_path);
@@ -26,7 +28,7 @@ const load_module = function (module, callback) {
     //return mod;
 }
 let config = {
-    hostname: hostname,
+    server: server,
     mod: {
         props: modules_config,
         service: modules_service,
