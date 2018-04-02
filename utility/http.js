@@ -6,27 +6,28 @@ const success = function (res, data) {
 const error = function (res, data) {
     res.status(400).send(data);
 }
-const file = function (res, fileName) {
+const modFile = function (res, next, fileName) {
+    console.log('==>',config.mod.module.source);
     var options = {
-        root: __dirname + '/static/',
+        root: config.mod.module.source,
         dotfiles: 'deny',
         headers: {
             'x-timestamp': Date.now(),
             'x-sent': true
         }
     };
-    res.sendFile(fileName, options, function (err) {
+
+    res.sendFile('build/index.html', options, function (err) {
         if (err) {
-            next(err);
-        } else {
-            console.log('Sent:', fileName);
-        }
+            res.status = 500; 
+            next(new Error('Module source index file missing ' + err.message));
+          } 
     });
-    res.status(400).sendFile(data);
+    //res.status(400).sendFile(data);
 }
 
 module.exports = {
     success: success,
     error: error,
-    file: file
+    modFileSend: modFile
 };

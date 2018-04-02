@@ -4,18 +4,22 @@ debug.report = function (err, req, res, next) {
     // Do logging and user-friendly error message display    
     //res.redirect('/public/500.html')  
     if (res.status == 500) {
-        console.log(err.message);
+        console.log(err.stack);
         let options = {
             headers: {
                 'err-msg': err.message,
-                'err-info': err
+                'err-info': encodeURIComponent(err.stack)
             }
-          };
-        res.sendFile(config.server.public_dir + '/html/errors/error-500.html',options);
+        };
+        res.sendFile(config.server.public_dir + '/html/errors/error-500.html', options);
         //res.redirect('/public/error-500.html')  
+    }else{
+        next(err);
     }
+   //next(err);
     //res.json({ code:res.status, message: err.message });
 };
+
 module.exports = debug;
 /*
 200- OK; Standard response for successful HTTP requests

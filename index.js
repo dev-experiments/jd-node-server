@@ -18,8 +18,7 @@ app.use("/public", express.static(config.server.public_dir));
 //app.use(express.static(path.join(__dirname,config.module_default.modules_path)));
 //console.log('==> ',config.mod.service.getModuleConfigDir('hotels'));
 
-
-routes(app);
+routes(app, express);
 app.use(debug.report);
 var server = app.listen(port, function () {
   console.log("app running on port.", server.address().port);

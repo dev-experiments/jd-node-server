@@ -1,8 +1,9 @@
 const modules_config = require('./modules-default-config');
-const modules_service = require('./modules-service');
+const service = require('./service');
 const path = require('path');
 
 process.env.NODE_ENV = "development";
+process.env.PORT = 8080;
 
 const hostname = (process.env.NODE_ENV == 'development')
     ? "http://t.justdial.com/verticals/hotel"
@@ -10,19 +11,19 @@ const hostname = (process.env.NODE_ENV == 'development')
 
 let server = {};
 server.hostname = hostname;
-server.public_dir = path.join(__dirname,'/../','public');
+server.public_dir = service.getPublicDir();
 
-const load_module = function (module, callback) {
-    const mod_config_path = modules_service.getModuleConfigDir(module) + '/index.js';
+const load_module = function (module, next) {
+    const mod_config_path = service.getModuleConfigDir(module) + '/index.js';
 
     let mod = {};
     try {
         mod = require(mod_config_path);
-        mod.init(modules_service.getModuleDir(module));
+        mod.init(service.getModuleDir(module));
     }
     catch (e) {
-        console.log("Module config file missing.", e);
-        process.exit(1);
+        res.status=500;
+        next(new Error('Error in loading module..!! :-(')); 
     }
     config.mod.module = mod;
     //return mod;
@@ -31,9 +32,9 @@ let config = {
     server: server,
     mod: {
         props: modules_config,
-        service: modules_service,
         load: load_module,
         module: {},
-    }
+    },
+    service: service,
 }
 module.exports = config;

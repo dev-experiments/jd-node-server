@@ -1,10 +1,9 @@
-const path = require('path');
-const MOD_DIR = path.join(__dirname,'/../../../', '/modules/') ;
-
-const source = MOD_DIR + 'doctors/build/index.html';
-
-module.exports={
-    name: 'Doctors',
-    source: source
+let config = {};
+const init = function (sourceDir) {
+    config.source = sourceDir ;
+    config.boot_file = sourceDir + '/build/index.html';
+    config.public_path = sourceDir + '/build/static/';
 }
-
+config.name = 'Doctors';
+config.init = init;
+module.exports = config;
